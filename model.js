@@ -1,5 +1,9 @@
-const navigationData = {
+const coordinatesData = {
 	1: { x: -1336, y: 39, z: -1228, zoom: 5, name: "poster_big" },
+}
+
+const navigationData = {
+	'poster_big': './pages/arts/arts_page.html',
 }
 
 const globalState = {
@@ -195,6 +199,9 @@ function onClick(event, raycaster, mouse, camera, scene) {
 
 function handleIntersection(clickedObject) {
 	console.log(clickedObject);
+	if (navigationData[clickedObject.name]) {
+		window.location.href = navigationData[clickedObject.name];
+	}
 }
 
 function rotateCameraToPosition(camera, targetPosition, targetZoom, duration) {
@@ -221,8 +228,8 @@ function rotateCameraToPosition(camera, targetPosition, targetZoom, duration) {
 }
 
 function goNext() {
-	const targetPosition = new THREE.Vector3(navigationData[1].x, navigationData[1].y, navigationData[1].z);
-	const targetZoom = navigationData[1].zoom;
+	const targetPosition = new THREE.Vector3(coordinatesData[1].x, coordinatesData[1].y, coordinatesData[1].z);
+	const targetZoom = coordinatesData[1].zoom;
 	rotateCameraToPosition(globalState.camera, targetPosition, targetZoom, 2000);
 }
 

@@ -2,12 +2,14 @@ html,
 body {
   margin: 0;
   height: 100%;
+  background-image: linear-gradient(to top, #fbc2eb 0%, #a6c1ee 100%);
 }
 
 #c {
   width: 100%;
   height: 94%;
   display: block;
+  background-image: linear-gradient(to top, #fbc2eb 0%, #a6c1ee 100%);
 }
 
 #info {
@@ -26,14 +28,5 @@ a {
 	display: flex;
 	justify-content: space-between;
 	padding: 10px;
-	background-color: #000000;
 	height: 6%;
-  }
-
-  .button {
-	padding: 10px;
-	color: white;
-	background-color: #007bff;
-	border: none;
-	cursor: pointer;
   }
