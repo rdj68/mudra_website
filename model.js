@@ -1,14 +1,32 @@
+const navigationData = {
+	1: { x: -1336, y: 39, z: -1228, zoom: 5, name: "poster_big" },
+}
+
+const globalState = {
+	canvas: document.querySelector('#c'),
+	renderer: null,
+	camera: null,
+	scene: null,
+	controls: null,
+	raycaster: null,
+	mouse: null,
+	mixerInfos: [],
+}
+
+function init() {
+	canvas = globalState.canvas;
+	globalState.renderer = new THREE.WebGLRenderer({ canvas });
+	globalState.camera = getCamera();
+	globalState.controls = getControls(globalState.camera, globalState.canvas);
+	globalState.scene = getScene();
+	globalState.raycaster = new THREE.Raycaster();
+	globalState.mouse = new THREE.Vector2();
+}
+
 function main() {
-	const canvas = document.querySelector('#c');
-	const renderer = new THREE.WebGLRenderer({ canvas });
 
-	// Set up camera, controls, and scene
-	const camera = getCamera();
-	const controls = getControls(camera, canvas);
-	scene = getScene();
-
-	// Load the model
-	const mixerInfos = [];
+	init();
+	const { canvas, renderer, camera, scene, controls, mixerInfos } = globalState;
 	loadGLTF('models/scene.gltf', scene, camera, controls, mixerInfos);
 
 	// Raycasting setup
@@ -46,6 +64,7 @@ function main() {
 		}
 
 		renderer.render(scene, camera);
+		// console.log(camera.position);
 		requestAnimationFrame(render);
 	}
 
@@ -56,17 +75,19 @@ function getCamera() {
 	const fov = 45;
 	const aspect = 2; // the canvas default
 	const near = 0.1;
-	const far = 100;
+	const far = 50;
 	const camera = new THREE.PerspectiveCamera(fov, aspect, near, far);
 	camera.position.set(0, 10, 20);
+	camera.zoom = 2.2;
 	return camera;
 }
 
 function getControls(camera, canvas) {
 	// Set up controls
-	const controls = new THREE.OrbitControls(camera, canvas);
+	var controls = new THREE.OrbitControls(camera, canvas);
 	controls.target.set(0, 5, 0);
 	controls.maxPolarAngle = Math.PI / 2; // Limit vertical rotation to 90 degrees (horizontal only)
+	controls.minDistance = 600;
 	controls.update();
 
 	return controls;
@@ -175,4 +196,40 @@ function onClick(event, raycaster, mouse, camera, scene) {
 function handleIntersection(clickedObject) {
 	console.log(clickedObject);
 }
+
+function rotateCameraToPosition(camera, targetPosition, targetZoom, duration) {
+	const controls = globalState.controls;
+	const renderer = globalState.renderer;
+	const scene = globalState.scene;
+
+	const startPosition = camera.position.clone();
+	const startZoom = camera.zoom;
+
+	const tweenValues = { x: startPosition.x, z: startPosition.z, zoom: startZoom };
+
+	const tween = new TWEEN.Tween(tweenValues)
+		.to({ x: targetPosition.x, z: targetPosition.z, zoom: targetZoom }, duration)
+		.easing(TWEEN.Easing.Circular.InOut)
+		.onUpdate(() => {
+			camera.position.set(tweenValues.x, startPosition.y, tweenValues.z);
+			camera.zoom = targetZoom;
+			camera.lookAt(targetPosition);
+			controls.update();
+			renderer.render(scene, camera);
+		})
+		.start();
+}
+
+function goNext() {
+	const targetPosition = new THREE.Vector3(navigationData[1].x, navigationData[1].y, navigationData[1].z);
+	const targetZoom = navigationData[1].zoom;
+	rotateCameraToPosition(globalState.camera, targetPosition, targetZoom, 2000);
+}
+
+function animate() {
+	requestAnimationFrame(animate);
+	TWEEN.update(); // Update the tween animations
+}
+
+animate(); 
 main();

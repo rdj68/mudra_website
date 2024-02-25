@@ -6,7 +6,7 @@ body {
 
 #c {
   width: 100%;
-  height: 100%;
+  height: 94%;
   display: block;
 }
 
@@ -21,3 +21,19 @@ body {
 a {
   color: orange;
 }
+
+.button-container {
+	display: flex;
+	justify-content: space-between;
+	padding: 10px;
+	background-color: #000000;
+	height: 6%;
+  }
+
+  .button {
+	padding: 10px;
+	color: white;
+	background-color: #007bff;
+	border: none;
+	cursor: pointer;
+  }
